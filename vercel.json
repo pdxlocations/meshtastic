@@ -1,5 +1,8 @@
 {
     "redirects": [
-      { "source": "/settings", "destination": "/configuration" }
+      {
+        "source": "/settings/:path*",
+        "destination": "/configuration/:path*"
+      }
     ]
 }
