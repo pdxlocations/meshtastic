@@ -1,8 +1,24 @@
 {
     "redirects": [
       {
-        "source": "/settings/:path*",
-        "destination": "/configuration/:path*"
+        "source": "/settings",
+        "destination": "/configuration"
+      }
+      {
+        "source": "/settings/moduleconfig",
+        "destination": "/configuration/module"
+      }
+      {
+        "source": "/settings/moduleconfig/:path*",
+        "destination": "/configuration/module/:path*"
+      }
+      {
+        "source": "/settings/config",
+        "destination": "/configuration/device"
+      }
+      {
+        "source": "/settings/config/:path*",
+        "destination": "/configuration/device/:path*"
       }
     ]
 }
