@@ -14,11 +14,11 @@
       },
       {
         "source": "/settings/config",
-        "destination": "/configuration/device"
+        "destination": "/configuration/radio"
       },
       {
         "source": "/settings/config/:path*",
-        "destination": "/configuration/device/:path*"
+        "destination": "/configuration/radio/:path*"
       }
     ]
 }
