@@ -38,6 +38,10 @@ const config = {
 					to: "downloads",
 				},
 				{
+					label: "Community",
+					to: "community",
+				},
+				{
 					label: "About",
 					position: "right",
 					items: [
