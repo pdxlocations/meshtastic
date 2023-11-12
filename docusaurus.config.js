@@ -40,6 +40,7 @@ const config = {
 				{
 					label: "Community",
 					to: "community",
+					position: "right",
 				},
 				{
 					label: "About",
