@@ -34,12 +34,12 @@ const config = {
 					to: "docs/introduction",
 				},
 				{
-					label: "Downloads",
-					to: "downloads",
-				},
-				{
 					label: "Community",
 					to: "community",
+				},
+				{
+					label: "Downloads",
+					to: "downloads",
 					position: "right",
 				},
 				{
