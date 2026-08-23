@@ -1,7 +1,7 @@
 ---
 title: Messages & Channels
 sidebar_position: 3
-last_updated: 2026-06-25
+last_updated: 2026-07-11
 description: Send and receive messages, manage channels, configure encryption, search conversations, and use quick chat, reactions, and message actions.
 parent: User Guide
 ---
@@ -52,15 +52,17 @@ Direct messages (DMs) are point-to-point encrypted communications between two sp
 
 ### Message States
 
-| State | Icon | Meaning |
-|-------|------|---------|
-| Queued | ⏳ | Message waiting to be sent |
-| En route | ✓ | Delivered to the radio, awaiting acknowledgment |
-| Delivered | ✓✓ | Acknowledgment received from recipient |
-| Received | ✓ | Message received from the mesh (incoming) |
-| S&F Routing | 🔗 | Store & Forward: message being routed through an S&F node |
-| S&F Confirmed | 🔗 | Store & Forward: delivery confirmed via S&F node |
-| Error | ✗ | Delivery failed after retries |
+A status label appears under **your own** outgoing messages only (incoming messages from others show no status label):
+
+| State | Meaning |
+|-------|---------|
+| Sending… | Queued or already handed to the radio, not yet resolved either way (queued and en-route both show this same text) |
+| Delivered to recipient | The strongest confirmation for a direct message — an acknowledgment came back |
+| Delivered to mesh | For a channel broadcast, the message reached the mesh (broadcasts have no per-recipient ack) |
+| Relayed, not confirmed by recipient | For a direct message, shown in a warning color — the message was relayed but no acknowledgment has come back yet |
+| Routing via SF++ chain… | Being routed/buffered by the Store & Forward Plus Plus chain |
+| Confirmed on SF++ chain | Confirmed delivered via the SF++ chain |
+| Error | Delivery failed — tap the status for the specific reason (see Delivery Errors below) |
 
 ### Delivery Errors
 
@@ -71,13 +73,13 @@ When a message fails to deliver, the error indicator shows what went wrong:
 | No Route | No path exists to the destination node | The recipient may be offline or out of mesh range. Try later or move closer. |
 | Got NAK | The next-hop node refused to relay | The relay node may be congested. Wait and retry. |
 | Timeout | No acknowledgment within retry window | The recipient may be just out of range. Try increasing hop limit or moving to a better position. |
-| No Interface | No radio interface available to send | Check that your radio is connected and the channel is configured. |
-| Max Retransmit | All retry attempts exhausted | The mesh path is unreliable. Try a different channel or wait for conditions to improve. |
-| No Channel | The destination channel doesn't exist | Verify both nodes share the same channel configuration. |
-| Too Large | Message exceeds maximum payload size | Shorten your message (max ~200 characters). |
-| No Response | Node received message but didn't respond | The recipient's radio may be busy or in low-power sleep mode. |
-| Duty Cycle Limit | Regional airtime limit reached | Your radio has used its allowed transmit time. Wait for the duty cycle window to reset (typically 1 hour in EU regions). |
-| Bad Request | Malformed or invalid message | This usually indicates a software bug. Try restarting the app. |
+| No radio interface | No radio interface available to send | Check that your radio is connected and available. |
+| Failed to deliver to mesh | All retry attempts exhausted | Move closer, improve signal, or wait for mesh conditions to improve. |
+| Channel/key mismatch | Destination channel/key does not match | Verify both nodes share the same channel and PSK. |
+| Message is too large to send | Message exceeds maximum payload size | Shorten the message and try again. |
+| No app response | App or plugin did not respond to the request | Retry or check the destination app or module state. |
+| Duty cycle limit | Regional airtime limit reached | Wait for the duty cycle window to reset. |
+| Invalid request | Malformed or invalid request | Retry after updating or restarting the app if this persists. |
 
 > 💡 **Tip:** Most delivery errors resolve themselves. If a node is intermittently reachable, the mesh will retry. For persistent "No Route" errors, check that intermediate Router nodes are online.
 
@@ -110,11 +112,31 @@ You can search the full history of any conversation directly from the chat scree
 
 ![Message search bar with result counter and previous/next arrows](/img/android/docs/messages_search_bar.webp)
 
-> 💡 **Tip:** Search is full-text and stays within the conversation you opened it from — it doesn't search across other channels or contacts. Matching is fast even on long histories because messages are indexed locally.
+> 💡 **Tip:** Search is full-text and stays within the conversation you opened it from — it doesn't search across other channels or contacts. It matches against the messages already stored on your device, so it works fully offline.
 
 ### Message Bubbles
 
 Messages appear as chat bubbles — sent messages on the right, received messages on the left. Each bubble shows the sender, timestamp, and delivery status. Messages with replies include a quoted preview of the original message above the response.
+
+### Text Formatting
+
+Messages support lightweight inline **Markdown**. Received messages render the styling with the syntax characters removed:
+
+| Type | Syntax | Renders as |
+|------|--------|------------|
+| Bold | `**bold**` | **bold** |
+| Italic | `*italic*` | *italic* |
+| Strikethrough | `~~strike~~` | ~~strike~~ |
+| Inline code | `` `code` `` | monospace `code` |
+| Link | `[label](https://example.com)` | a tappable **label** |
+
+When composing, focus the message field and type at least three characters to reveal a **formatting toolbar** below the input. Select text and tap a style to wrap it (tap again to remove it); with no selection, a style inserts an empty pair with the cursor between the markers. The link button opens a dialog to enter a URL. As you type, the draft styles live in the field while the underlying text keeps its Markdown characters.
+
+> 💡 **Tip:** Formatting is carried as literal characters on the mesh — the same bytes iOS sends. Clients that don't support Markdown (older apps, plain firmware clients) will show the raw `**`/`~~` characters. URLs, email addresses, and phone numbers are still auto-linked whether or not you use Markdown.
+
+### Mentions
+
+Type `@` while composing to mention a node — a picker suggests matching contacts as you type. In a received message, a mention appears as a highlighted chip showing the node's name; tap it to jump straight to that node's detail page.
 
 ### Reactions
 
@@ -135,6 +157,7 @@ Long-press any message to access:
 - **Copy** — copy message text to clipboard
 - **Reply** — quote the message in your response
 - **React** — add an emoji reaction
+- **Translate** — translate a received message into your device language and toggle between the original and translated text (Google Play build only; uses on-device translation)
 - **Delete** — remove a message you sent (local deletion)
 
 ### Message Priority
@@ -147,6 +170,7 @@ Messages are queued and transmitted based on priority:
 ### Message Limits
 
 - **Maximum length:** 200 bytes (approximately 200 characters for ASCII text)
+- The 200-byte cap applies to the in-app composer — the mesh payload limit itself is ~233 bytes, so messages from other senders (e.g., App Functions or Android Auto) may arrive slightly longer
 - **Rate limiting:** The mesh enforces airtime fairness; heavy message volume may be throttled
 - **Delivery:** Messages are retried automatically if no acknowledgment is received
 
